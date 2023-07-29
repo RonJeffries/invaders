@@ -24,9 +24,8 @@ class Game:
         self.player_location = Vector2(128, 128)
 
     def alien_surface(self, alien1):
-        s = Surface((16, 8), pygame.SRCALPHA, 32)
-        trans = Color(0, 0,0,0)
-        s.fill(trans)
+        s = Surface((16, 8))
+        s.set_colorkey((0, 0, 0))
         count = 0
         for byte in alien1:
             for z in range(8):
