@@ -30,10 +30,9 @@ class Game:
         for byte in alien1:
             for z in range(8):
                 bit = byte & 1
-                x = int(count / 8)
-                y = 7 - int(count % 8)
+                x, y = divmod(count, 8)
                 if bit:
-                    s.set_at((x, y), "white")
+                    s.set_at((x, 7-y), "white")
                 byte = byte >> 1
                 count += 1
         return s
