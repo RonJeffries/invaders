@@ -25,7 +25,7 @@ class Game:
 
     def alien_surface(self, alien1):
         s = Surface((16, 8), pygame.SRCALPHA, 32)
-        trans = Color(0,0,0,0)
+        trans = Color(0, 0,0,0)
         s.fill(trans)
         count = 0
         for byte in alien1:
