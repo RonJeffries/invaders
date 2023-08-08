@@ -12,23 +12,28 @@ class Game:
         alien11 = (0x00, 0x00, 0x38, 0x7A, 0x7F, 0x6D, 0xEC, 0xFA, 0xFA, 0xEC, 0x6D, 0x7F, 0x7A, 0x38, 0x00, 0x00)
         alien21 = (0x00, 0x00, 0x00, 0x0E, 0x18, 0xBE, 0x6D, 0x3D, 0x3C, 0x3D, 0x6D, 0xBE, 0x18, 0x0E, 0x00, 0x00)
         alien31 = (0x00, 0x00, 0x00, 0x00, 0x1A, 0x3D, 0x68, 0xFC, 0xFC, 0x68, 0x3D, 0x1A, 0x00, 0x00, 0x00, 0x00)
+        player = (0x00, 0x00, 0x0F, 0x1F, 0x1F, 0x1F, 0x1F, 0x7F, 0xFF, 0x7F, 0x1F, 0x1F, 0x1F, 0x1F, 0x0F, 0x00)
+        playere0 = (0x00, 0x04, 0x01, 0x13, 0x03, 0x07, 0xB3, 0x0F, 0x2F, 0x03, 0x2F, 0x49, 0x04, 0x03, 0x00, 0x01)
+        playere1 = (0x40, 0x08, 0x05, 0xA3, 0x0A, 0x03, 0x5B, 0x0F, 0x27, 0x27, 0x0B, 0x4B, 0x40, 0x84, 0x11, 0x48)
         if not testing:
             pygame.init()
             pygame.display.set_caption("Space Invaders")
             self.delta_time = 0
             self.clock = pygame.time.Clock()
-            self.screen = pygame.display.set_mode((512, 256))
-            self.alien10 = self.alien_surface(alien10)
-            self.alien20 = self.alien_surface(alien20)
-            self.alien30 = self.alien_surface(alien30)
-            self.alien10 = pygame.transform.scale_by(self.alien10, 4)
-            self.alien20 = pygame.transform.scale_by(self.alien20, 4)
-            self.alien30 = pygame.transform.scale_by(self.alien30, 4)
-            self.alien11 = pygame.transform.scale_by(self.alien_surface(alien11), 4)
-            self.alien21 = pygame.transform.scale_by(self.alien_surface(alien21), 4)
-            self.alien31 = self.make_alien(alien31, 4)
+            self.screen = pygame.display.set_mode((512, 512))
+            # self.alien10 = self.alien_surface(alien10)
+            # self.alien20 = self.alien_surface(alien20)
+            # self.alien30 = self.alien_surface(alien30)
+            # self.alien10 = pygame.transform.scale_by(self.alien10, 4)
+            # self.alien20 = pygame.transform.scale_by(self.alien20, 4)
+            # self.alien30 = pygame.transform.scale_by(self.alien30, 4)
+            # self.alien11 = pygame.transform.scale_by(self.alien_surface(alien11), 4)
+            # self.alien21 = pygame.transform.scale_by(self.alien_surface(alien21), 4)
+            # self.alien31 = self.make_alien(alien31, 4)
             aliens = (alien10, alien11, alien20, alien21, alien30, alien31)
             self.aliens = [self.make_alien(bytes, 8) for bytes in aliens]
+            players = (player, playere0, playere1)
+            self.players = [self.make_alien(bytes, 8) for bytes in players]
         self.player_location = Vector2(128, 128)
 
     def make_alien(self, bytes, scale):
@@ -67,6 +72,9 @@ class Game:
                 x_off = 256*(i%2)
                 dest = (x_base + x_off, 16+80*(i//2))
                 self.screen.blit(alien, dest)
+            for p, player in enumerate(self.players):
+                dest = (32, 256 + 80*p)
+                self.screen.blit(player, dest)
             pygame.display.flip()
             self.delta_time = self.clock.tick(60) / 1000
         return "done"
