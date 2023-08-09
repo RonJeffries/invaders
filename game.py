@@ -116,7 +116,7 @@ class Game:
                 dest = (32 + 160 + 36*s, 512)
                 self.screen.blit(plunger, dest)
             for s, roller in enumerate(self.rollers):
-                dest = (32 + 320     + 36*s, 512)
+                dest = (32 + 320 + 36*s, 512)
                 self.screen.blit(roller, dest)
             dest = (32, 512 + 80)
             self.screen.blit(self.shield, dest)
