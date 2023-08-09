@@ -27,6 +27,10 @@ class Game:
         p_1 = (0x10, 0xFC, 0x10)
         p_2 = (0x20, 0xFC, 0x20)
         p_3 = (0x80, 0xFC, 0x80)
+        r0 = (0x00, 0xFE, 0x00)
+        r1 = (0x24, 0xFE, 0x12)
+        r2 = (0x00, 0xFE, 0x00)
+        r3 = (0x48, 0xFE, 0x90)
         # shield is 22 pixels by 16 pixels, 44 bytes
         shield = (
             0xFF, 0x0F, 0xFF, 0x1F, 0xFF, 0x3F, 0xFF, 0x7F, 0xFF, 0xFF, 0xFC,
@@ -51,6 +55,8 @@ class Game:
             self.squigs = [self.make_and_scale_surface(squig, 8, (3, 8)) for squig in squigs]
             plungers = (p_0, p_1, p_2, p_3)
             self.plungers = [self.make_and_scale_surface(plunger, 8, (3, 8)) for plunger in plungers]
+            rollers = (r0, r1, r2, r3)
+            self.rollers = [self.make_and_scale_surface(plunger, 8, (3, 8)) for plunger in rollers]
             self.shield = self.make_and_scale_surface(shield, 8, (22, 16))
         self.player_location = Vector2(128, 128)
 
@@ -107,8 +113,11 @@ class Game:
                 dest = (32 + 36*s, 512)
                 self.screen.blit(squiggle, dest)
             for s, plunger in enumerate(self.plungers):
-                dest = (32 + 256 + 36*s, 512)
+                dest = (32 + 160 + 36*s, 512)
                 self.screen.blit(plunger, dest)
+            for s, roller in enumerate(self.rollers):
+                dest = (32 + 320     + 36*s, 512)
+                self.screen.blit(roller, dest)
             dest = (32, 512 + 80)
             self.screen.blit(self.shield, dest)
             pygame.display.flip()
