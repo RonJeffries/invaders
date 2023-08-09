@@ -35,16 +35,18 @@ class Game:
             # self.alien21 = pygame.transform.scale_by(self.alien_surface(alien21), 4)
             # self.alien31 = self.make_alien(alien31, 4)
             aliens = (alien10, alien11, alien20, alien21, alien30, alien31)
-            self.aliens = [self.make_alien(bytes, 8) for bytes in aliens]
+            self.aliens = [self.make_and_scale_surface(bytes, 8) for bytes in aliens]
             players = (player, player_e0, player_e1)
-            self.players = [self.make_alien(bytes, 8) for bytes in players]
-            self.saucer = self.make_alien(saucer, 8, (24, 8))
+            self.players = [self.make_and_scale_surface(bytes, 8) for bytes in players]
+            saucers = (saucer, saucer_e)
+            self.saucers = [self.make_and_scale_surface(saucer, 8, (24, 8)) for saucer in saucers]
+            self.saucer = self.make_and_scale_surface(saucer, 8, (24, 8))
         self.player_location = Vector2(128, 128)
 
-    def make_alien(self, bytes, scale, size=(16, 8)):
-        return pygame.transform.scale_by(self.alien_surface(bytes, size), scale)
+    def make_and_scale_surface(self, bytes, scale, size=(16, 8)):
+        return pygame.transform.scale_by(self.make_surface(bytes, size), scale)
 
-    def alien_surface(self, alien, size=(16, 8)):
+    def make_surface(self, alien, size=(16, 8)):
         s = Surface(size)
         s.set_colorkey((0, 0, 0))
         count = 0
@@ -80,8 +82,9 @@ class Game:
             for p, player in enumerate(self.players):
                 dest = (32, 256 + 80*p)
                 self.screen.blit(player, dest)
-            dest = (32+256, 256)
-            self.screen.blit(self.saucer, dest)
+            for s, saucer in enumerate(self.saucers):
+                dest = (32+256, 256 + 80*s)
+                self.screen.blit(saucer, dest)
             pygame.display.flip()
             self.delta_time = self.clock.tick(60) / 1000
         return "done"
