@@ -19,21 +19,26 @@ class Game:
                   0x1E, 0x0C, 0x04, 0x00, 0x00, 0x00, 0x00)
         saucer_e = (0x00, 0x22, 0x00, 0xA5, 0x40, 0x08, 0x98, 0x3D, 0xB6, 0x3C, 0x36, 0x1D, 0x10, 0x48, 0x62, 0xB6,
                     0x1D, 0x98, 0x08, 0x42, 0x90, 0x08, 0x00, 0x00)
+        squig_0 = (0x44, 0xAA, 0x10)
+        squig_1 = (0x88, 0x54, 0x22)
+        squig_2 = (0x10, 0xAA, 0x44)
+        squig_3 = (0x22, 0x54, 0x88)
+        p_0 = (0x04, 0xFC, 0x04)
+        p_1 = (0x10, 0xFC, 0x10)
+        p_2 = (0x20, 0xFC, 0x20)
+        p_3 = (0x80, 0xFC, 0x80)
+        # shield is 22 pixels by 16 pixels, 44 bytes
+        shield = (
+            0xFF, 0x0F, 0xFF, 0x1F, 0xFF, 0x3F, 0xFF, 0x7F, 0xFF, 0xFF, 0xFC,
+            0xFF, 0xF8, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF,
+            0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF8, 0xFF, 0xFC, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xFF, 0x3F, 0xFF, 0x1F, 0xFF, 0x0F)
         if not testing:
             pygame.init()
             pygame.display.set_caption("Space Invaders")
             self.delta_time = 0
             self.clock = pygame.time.Clock()
             self.screen = pygame.display.set_mode((512, 768))
-            # self.alien10 = self.alien_surface(alien10)
-            # self.alien20 = self.alien_surface(alien20)
-            # self.alien30 = self.alien_surface(alien30)
-            # self.alien10 = pygame.transform.scale_by(self.alien10, 4)
-            # self.alien20 = pygame.transform.scale_by(self.alien20, 4)
-            # self.alien30 = pygame.transform.scale_by(self.alien30, 4)
-            # self.alien11 = pygame.transform.scale_by(self.alien_surface(alien11), 4)
-            # self.alien21 = pygame.transform.scale_by(self.alien_surface(alien21), 4)
-            # self.alien31 = self.make_alien(alien31, 4)
             aliens = (alien10, alien11, alien20, alien21, alien30, alien31)
             self.aliens = [self.make_and_scale_surface(bytes, 8) for bytes in aliens]
             players = (player, player_e0, player_e1)
@@ -41,24 +46,35 @@ class Game:
             saucers = (saucer, saucer_e)
             self.saucers = [self.make_and_scale_surface(saucer, 8, (24, 8)) for saucer in saucers]
             self.saucer = self.make_and_scale_surface(saucer, 8, (24, 8))
+            self.squig = self.make_and_scale_surface(squig_0, 8, (3, 8))
+            squigs = (squig_0, squig_1, squig_2, squig_3)
+            self.squigs = [self.make_and_scale_surface(squig, 8, (3, 8)) for squig in squigs]
+            plungers = (p_0, p_1, p_2, p_3)
+            self.plungers = [self.make_and_scale_surface(plunger, 8, (3, 8)) for plunger in plungers]
+            self.shield = self.make_and_scale_surface(shield, 8, (22, 16))
         self.player_location = Vector2(128, 128)
 
     def make_and_scale_surface(self, bytes, scale, size=(16, 8)):
         return pygame.transform.scale_by(self.make_surface(bytes, size), scale)
 
-    def make_surface(self, alien, size=(16, 8)):
+    def make_surface(self, bytes, size=(16, 8)):
         s = Surface(size)
         s.set_colorkey((0, 0, 0))
-        count = 0
-        for byte in alien:
-            for z in range(8):
-                bit = byte & 1
-                x, y = divmod(count, 8)
-                if bit:
-                    s.set_at((x, 7-y), "white")
-                byte = byte >> 1
-                count += 1
+        width = size[0]
+        layers = len(bytes)//width
+        for x, byte in enumerate(bytes):
+            x_in = x // layers
+            y_offset = 0 if layers == 1 else 8 - (x % layers)*8
+            self.store_byte(byte, x_in, y_offset, s)
         return s
+
+    def store_byte(self, byte, x, y_offset, surface):
+        for z in range(8):
+            bit = byte & 1
+            y = y_offset + 7 - z
+            if bit:
+                surface.set_at((x, y), "white")
+            byte = byte >> 1
 
     def main_loop(self):
         running = not self._testing
@@ -85,6 +101,16 @@ class Game:
             for s, saucer in enumerate(self.saucers):
                 dest = (32+256, 256 + 80*s)
                 self.screen.blit(saucer, dest)
+            # dest = (32, 512)
+            # self.screen.blit(self.squig, dest)
+            for s, squiggle in enumerate(self.squigs):
+                dest = (32 + 36*s, 512)
+                self.screen.blit(squiggle, dest)
+            for s, plunger in enumerate(self.plungers):
+                dest = (32 + 256 + 36*s, 512)
+                self.screen.blit(plunger, dest)
+            dest = (32, 512 + 80)
+            self.screen.blit(self.shield, dest)
             pygame.display.flip()
             self.delta_time = self.clock.tick(60) / 1000
         return "done"
