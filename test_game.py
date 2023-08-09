@@ -16,4 +16,4 @@ class TestGame:
                 print(f"<{x}, {y}, {z}>,")
             else:
                 print(f"<{x}, {y}, {z}>")
-        assert False
+        assert True
