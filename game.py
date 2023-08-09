@@ -24,7 +24,7 @@ class Game:
             pygame.display.set_caption("Space Invaders")
             self.delta_time = 0
             self.clock = pygame.time.Clock()
-            self.screen = pygame.display.set_mode((512, 512))
+            self.screen = pygame.display.set_mode((512, 768))
             # self.alien10 = self.alien_surface(alien10)
             # self.alien20 = self.alien_surface(alien20)
             # self.alien30 = self.alien_surface(alien30)
